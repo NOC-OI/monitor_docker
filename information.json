@@ -1,0 +1,10 @@
+{
+  "containers": [
+    {"name": "api_calculations_use_cases", "image": "docker-repo.bodc.me/oceaninfo/imfe-pilot/api_calculations_use_cases_web:latest", "port": "8081"},
+    {"name": "tile-server", "image": "docker-repo.bodc.me/oceaninfo/imfe-pilot/titiler-uvicorn:latest", "port": "8083"},
+    {"name": "documentation", "image": "uk-london-1.ocir.io/lrl8vbuxj1ma/documentation:latest", "port": "8084"},
+    {"name": "mbtiles", "image": "docker-repo.bodc.me/oceaninfo/imfe-pilot/mbtiles:latest", "port": "8082"},
+    {"name": "frontend", "image": "uk-london-1.ocir.io/lrl8vbuxj1ma/frontend:latest", "port": "8080"}
+  ],
+  "email_to": ["tobias.ferreira@noc.ac.uk", "tobias.ramalho.ferreira@gmail.com", "colin.sauze@noc.ac.uk"]
+}

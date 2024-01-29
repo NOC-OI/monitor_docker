@@ -1,0 +1,37 @@
+default:
+  image: python:3.9
+
+test-job:
+  stage: test
+  tags:
+    - docker
+  script:
+    - pip install -r requirements.txt
+    - make pre-commit
+
+build-job:
+  stage: build
+  tags:
+    - shell
+  script:
+    - docker build -t uk-london-1.ocir.io/lrl8vbuxj1ma/monitor_docker:latest .
+
+#this needs to be aware of docker compose
+deploy-job:
+  stage: deploy
+  tags:
+      - shell
+  rules: #only deploy on the master branch
+    - if: '$CI_COMMIT_BRANCH == "master"'
+  script:
+    #note: we must have done a "docker login docker-repo.bodc.me" manually on the build and web VMs before this pipeline can run
+    - docker push uk-london-1.ocir.io/lrl8vbuxj1ma/monitor_docker:latest
+    - ssh web "mkdir -p ~/monitor_docker && cp .monitor_docker-env monitor_docker/.env"
+    - scp -r data web:/home/gitlab-runner/monitor_docker
+    - scp docker_status_checker.sh web:/home/gitlab-runner/monitor_docker/
+    - ssh web 'docker pull uk-london-1.ocir.io/lrl8vbuxj1ma/monitor_docker:latest'
+    - ssh web 'docker volume create data'
+    - ssh web 'docker stop monitor_docker || true '
+    - ssh web 'docker container rm monitor_docker || true'
+    - ssh web 'docker run --env-file ~/monitor_docker/.env -v /home/gitlab-runner/monitor_docker/data/:/data -d -t --name monitor_docker uk-london-1.ocir.io/lrl8vbuxj1ma/monitor_docker:latest'
+    - ssh web 'docker cp /home/gitlab-runner/monitor_docker/data/containers_status.csv monitor_docker:/data/'

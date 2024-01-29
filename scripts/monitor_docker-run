@@ -1,0 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+from monitor_docker.monitor_docker import MonitorDocker
+MonitorDocker().check_containers()

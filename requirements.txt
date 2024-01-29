@@ -1,0 +1,11 @@
+numpy
+pandas
+black
+coverage
+flake8
+pylint
+pre-commit
+isort
+pytest
+yapf
+python-dotenv
